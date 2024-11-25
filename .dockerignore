@@ -1,0 +1,12 @@
+Dockerfile
+.dockerignore
+node_modules
+migrations
+dist
+.git
+.idea
+*.md
+npm-debug.log
+.env.test
+.env.production
+.env.development

@@ -1,3 +1,5 @@
+version: '3.7'
+
 networks:
   production:
 
@@ -7,7 +9,7 @@ services:
     build:
       context: .
       target: production
-    container_name: rulyou
+    container_name: image-generator
     ports:
       - "3000:80"
       - "8080:8080"

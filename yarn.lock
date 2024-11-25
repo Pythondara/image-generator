@@ -1226,10 +1226,6 @@
     "@typescript-eslint/types" "6.21.0"
     eslint-visitor-keys "^3.4.1"
 
-"@typs/@nestjs/axios":
-  version "3.1.2"
-  resolved "https://codeload.github.com/nestjs/axios/tar.gz/6fba1de723db3c8bc63e9b9c79b2a19a1928e9aa"
-
 "@ungap/structured-clone@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
