@@ -1,0 +1,19 @@
+networks:
+  production:
+
+services:
+
+  backend:
+    build:
+      context: .
+      target: production
+    container_name: rulyou
+    ports:
+      - "3000:80"
+      - "8080:8080"
+      - "6001:6001"
+    env_file:
+      - .env
+    networks:
+      - production
+
