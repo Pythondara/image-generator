@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RequestParamsDto } from './dto';
+import { RequestParamsDto, StyleEnum } from './dto';
 import { FusionBrainService } from './fusion-brain.service';
 
 @ApiTags('Генерация картинки')
@@ -12,10 +12,14 @@ export class FusionBrainController {
     summary: 'Запрос на генерацию изображения',
     description: 'Запрос на генерацию изображения',
   })
-  @Post('/generate')
+  @Post('/generate/:style')
+  @ApiParam({
+    name: 'style',
+    enum: StyleEnum,
+  })
   @ApiResponse({ status: '2XX' })
-  async sendConsent(@Body() params: RequestParamsDto) {
-    return this.service.generate(params);
+  async sendConsent(@Body() dto: RequestParamsDto, @Param() style: string) {
+    return this.service.generate(dto, style);
   }
 
   @ApiOperation({

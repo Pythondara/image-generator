@@ -1,48 +1,76 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { firstValueFrom, lastValueFrom, timer } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 
 import { ConfigVariables } from '../config';
-import { RequestParamsDto, HeadersDto } from './dto';
+import { RequestParamsDto } from './dto';
 
 @Injectable()
 export class FusionBrainService {
+  private readonly logger = new Logger(FusionBrainService.name);
   constructor(
     private readonly http: HttpService,
     private readonly config: ConfigService<ConfigVariables, true>,
   ) {}
-  async generate(params: RequestParamsDto) {
-    const headers = {
-      'X-Key': `Key ${this.config.get('fusionBrain.apiKey', { infer: true })}`,
-      'X-Secret': `Secret ${this.config.get('fusionBrain.secretKey', { infer: true })}`,
-    } as any;
+  async generate(dto: RequestParamsDto, modelId = '4') {
+    const apiKey = `Key ${this.config.get('fusionBrain.apiKey', { infer: true })}`;
+    const secretKey = `Secret ${this.config.get('fusionBrain.secretKey', { infer: true })}`;
 
-    const x = await this.getModel(headers);
+    const url =
+      this.config.get('fusionBrain.url', { infer: true }) +
+      'key/api/v1/text2image/run';
+
+    const formattedUrl = new URL(url).toString();
 
     try {
-      const { data } = await firstValueFrom(
-        this.http.post(
-          this.config.get('fusionBrain.url', { infer: true }) +
-            'key/api/v1/text2image/run',
-          { params, model_id: x },
-          { headers },
-        ),
+      this.logger.log({ message: 'Sending response...' });
+
+      const json = JSON.stringify(dto);
+
+      const blob = new Blob([json], {
+        type: 'application/json',
+      });
+
+      const formData = new FormData();
+      formData.append('params', blob);
+      formData.append('model_id', modelId);
+
+      const { data } = await lastValueFrom(
+        this.http.post(formattedUrl, formData, {
+          headers: {
+            'X-Key': apiKey,
+            'X-Secret': secretKey,
+            'Content-Type': 'multipart/form-data',
+          },
+        }),
       );
+
+      this.logger.log({ message: 'Response successfully sent' });
+
+      this.logger.debug({
+        message: 'Response successfully sent',
+        data: { data },
+      });
 
       return data;
     } catch (e) {
+      this.logger.error({ message: 'Something went wrong', data: { e } });
       throw new BadRequestException(e);
     }
   }
 
-  async getModel(headers) {
+  async getModel() {
     try {
       const { data } = await lastValueFrom(
         this.http.get(
           this.config.get('fusionBrain.url', { infer: true }) +
             'key/api/v1/models',
-          { headers },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
         ),
       );
 
@@ -52,29 +80,31 @@ export class FusionBrainService {
     }
   }
 
-  async checkGenerationStatus(requestId: string, attempts = 10, delay = 1000) {
-    // const headers = {
-    //   'X-Key': `Key ${this.config.get('fusionBrain.apiKey', { infer: true })}`,
-    //   'X-Secret': `Secret ${this.config.get('fusionBrain.secretKey', { infer: true })}`,
-    // } as any;
+  async checkGenerationStatus(requestId: string) {
+    const { data } = await lastValueFrom(
+      this.http.get(
+        this.config.get('fusionBrain.url', { infer: true }) +
+          'key/api/v1/text2image/status/' +
+          requestId,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Key': `Key ${this.config.get('fusionBrain.apiKey', { infer: true })}`,
+            'X-Secret': `Secret ${this.config.get('fusionBrain.secretKey', { infer: true })}`,
+          },
+        },
+      ),
+    );
 
-    while (attempts >= 0) {
-      const { data } = await lastValueFrom(
-        this.http.get(
-          this.config.get('fusionBrain.url', { infer: true }) +
-            'key/api/v1/text2image/status/' +
-            requestId,
-        ),
-      );
-
-      if (data['status'] === 'DONE') {
+    switch (data['status']) {
+      case 'INITIAL':
+        return { message: 'Image initializing' };
+      case 'DONE':
         return data['images'];
-      }
-
-      attempts -= 1;
-      await lastValueFrom(timer(delay));
+      case 'PROCESSING':
+        return { message: 'Image processing' };
+      case 'FAIL':
+        throw new BadRequestException('Generation failed');
     }
-
-    throw new BadRequestException('Maximum attempts reached');
   }
 }

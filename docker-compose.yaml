@@ -11,7 +11,7 @@ services:
       target: production
     container_name: image-generator
     ports:
-      - "3000:80"
+      - "3000:3000"
       - "8080:8080"
       - "6001:6001"
     env_file:

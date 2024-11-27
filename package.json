@@ -28,6 +28,7 @@
     "dayjs": "^1.11.13",
     "minio": "^8.0.2",
     "nest-winston": "^1.9.7",
+    "nestjs-convert-to-curl": "^1.0.0",
     "prisma": "^5.22.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",

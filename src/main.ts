@@ -5,6 +5,7 @@ import { join } from 'path';
 import Logger from './utils/logger';
 import config from './config/config';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 ConfigModule.forRoot({
   load: [config],
@@ -14,6 +15,7 @@ const envConfig = config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
 
   const logsFolder = join(__dirname, '../logs');
 
