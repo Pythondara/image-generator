@@ -39,8 +39,8 @@ export class ImageController {
   }
 
   @ApiOperation({
-    summary: 'Получение изображения по идентификатору изображения',
-    description: 'Получение изображения по идентификатору изображения',
+    summary: 'Получение списка изображений',
+    description: 'Получение списка изображений',
   })
   @ApiQuery({
     name: 'pagination',
