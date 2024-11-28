@@ -42,6 +42,6 @@ COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 COPY --chown=node:node --from=build /usr/src/app/package*.json ./
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD [ "node", "dist/main.js" ]
