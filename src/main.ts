@@ -22,8 +22,8 @@ async function bootstrap() {
   app.useLogger(Logger(logsFolder));
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Image generator documentation')
-    .setDescription('Methods for interacting with a image generator')
+    .setTitle('Image service documentation')
+    .setDescription('Methods for interacting with an image service')
     .setVersion('1.0')
     .addTag('')
     .build();
@@ -31,7 +31,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('/api/swagger', app, document);
 
-  console.log(envConfig.port, envConfig.host);
   await app.listen(envConfig.port, envConfig.host);
 }
 bootstrap();

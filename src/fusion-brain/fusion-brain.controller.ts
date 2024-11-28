@@ -1,35 +1,53 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RequestParamsDto, StyleEnum } from './dto';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { GenerateImageParamsDto, GenerateImageQueryDto } from './dto';
 import { FusionBrainService } from './fusion-brain.service';
 
-@ApiTags('Генерация картинки')
+@ApiTags('Генерация изображения')
 @Controller('fusion-brain')
 export class FusionBrainController {
   constructor(private readonly service: FusionBrainService) {}
 
   @ApiOperation({
-    summary: 'Запрос на генерацию изображения',
-    description: 'Запрос на генерацию изображения',
+    summary: 'Генерация изображения',
+    description: 'Генерация изображения',
   })
   @Post('/generate/:style')
   @ApiParam({
     name: 'style',
-    enum: StyleEnum,
+    type: 'string',
+    required: true,
+    description: 'Стиль генерируемого изображения',
+  })
+  @ApiQuery({
+    name: 'prompt',
+    type: 'string',
+    required: true,
+    description: 'Промпт для генерации изображения',
   })
   @ApiResponse({ status: '2XX' })
-  async sendConsent(@Body() dto: RequestParamsDto, @Param() style: string) {
-    return this.service.generate(dto, style);
+  async generate(
+    @Query() prompt: GenerateImageQueryDto,
+    @Param() style: GenerateImageParamsDto,
+  ) {
+    return this.service.generate(prompt, style);
   }
 
   @ApiOperation({
-    summary: 'Запрос на генерацию изображения',
-    description: 'Запрос на генерацию изображения',
+    summary: 'Получение статуса генерации изображения',
+    description: 'Получение статуса генерации изображения',
   })
   @Get('/check/status/:requestId')
   @ApiParam({
     name: 'requestId',
     type: 'string',
+    required: true,
   })
   @ApiResponse({ status: '2XX' })
   async checkGenerationStatus(@Param('requestId') requestId: string) {

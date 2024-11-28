@@ -1,10 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ConfigVariablesMinioProperty {
-  @IsString()
-  @IsNotEmpty()
-  host: string;
-
   @IsNumber()
   @IsNotEmpty()
   port: number;
@@ -28,4 +24,8 @@ export class ConfigVariablesMinioProperty {
   @IsString()
   @IsNotEmpty()
   secretKey: string;
+
+  @IsString()
+  @IsNotEmpty()
+  bucketName: string;
 }

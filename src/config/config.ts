@@ -15,13 +15,13 @@ export default (): ConfigVariables => ({
     databaseUrl: process.env.DATABASE_URL,
   },
   minio: {
-    host: process.env.MINIO_HOST,
     port: +process.env.MINIO_PORT || 9001,
     username: process.env.MINIO_USERNAME,
     password: process.env.MINIO_PASSWORD,
     endPoint: process.env.MINIO_ENDPOINT,
     accessKey: process.env.MINIO_ACCESS_KEY,
     secretKey: process.env.MINIO_SECRET_KEY,
+    bucketName: process.env.BUCKET_NAME,
   },
   fusionBrain: {
     secretKey: process.env.FUSION_BRAIN_SECRET_KEY,
