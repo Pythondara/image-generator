@@ -41,13 +41,17 @@
 | `FUSION_BRAIN_SECRET_KEY`  |                                           | `String`  |          |
 
 
-Для применения необходимых конфигураций для контура:
+## Деплой в докере 
+1. Ввести предоставленную команду в консоль `docker-compose up -d`
+2. Применить миграции `npx prisma migrate dev`
 
-#### Docker
-```bash
-$ docker build --target production -t scc/svc-client
-$ docker run --env-file .env -p 3000:3000 -d scc/svc-client
-```
+## Локально
+1. Убедитесь, что на вашем пк есть `postgresql`
+2. Убедитесь, что на вашем пк есть `minio`
+3. Примените миграции `npx prisma migrate dev`
+4. Запустите приложение `yarn start:dev`
+
+## Заполняя .env ориентируйтесь на файлы env.[development, production, test] там предустановленные mock данные
 
 ## Создание новой версии сборки
 
