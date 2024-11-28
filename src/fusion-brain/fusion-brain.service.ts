@@ -61,7 +61,7 @@ export class FusionBrainService {
     formData.append('params', blob);
     formData.append('model_id', '4');
 
-    await this.minioService.makeBucket('hui');
+    await this.minioService.makeBucket(this.bucketName);
 
     try {
       this.logger.log({ message: 'Sending response to generate the image...' });
